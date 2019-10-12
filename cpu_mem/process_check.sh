@@ -1,5 +1,15 @@
 #/bin/bash
 
+#cpu_num=`lscpu | grep '^CPU(s):' | awk '{print $2}'`
+#cpu_num=`cat /proc/cpuinfo | grep 'physical id' | uniq -c`
+j=`cat /proc/cpuinfo | grep 'cpu cores' | uniq -c | awk '{print $1}'`
+k=`cat /proc/cpuinfo | grep 'cpu cores' | uniq -c | awk '{print $5}'`
+cpu_total=`expr $j \* $k`
+echo "$cpu_num"
+
+#总内存大小,单位:m
+mem_total=`free -m | awk '{if(NR==2){print $2}}'`
+
 #sum | avg
 mode=$1
 #cpu/mem
@@ -12,15 +22,15 @@ function memsum {
     echo "$mem_sum"
 }
 function memavg {
-    mem_avg=`cat /tmp/.ps.txt  | awk -v myprocess="$process" '{if($4==myprocess){n++;a[myprocess]+=$2}}END{for(i in a){print a[i]/n}}'`
-    echo "$mem_avg"
+    mem_avg=`cat /tmp/.ps.txt  | awk -v myprocess="$process" '{if($4==myprocess){a[myprocess]+=$2}}END{for(i in a){print a[i]}}'`
+    echo "sacle=2;$mem_avg \* $mem_total" | bc 
 }
 function cpusum {
     cpu_sum=`cat /tmp/.ps.txt  | awk -v myprocess="$process" '{if($4==myprocess){a[myprocess]+=$3}}END{for(i in a){print a[i]}}'`
     echo "$cpu_sum"
 }
 function cpuavg {
-    cpu_avg=`cat /tmp/.ps.txt  | awk -v myprocess="$process" '{if($4==myprocess){n++;a[myprocess]+=$3}}END{for(i in a){print a[i]/n}}'`
+    cpu_avg=`cat /tmp/.ps.txt  | awk -v myprocess="$process" '{if($4==myprocess){a[myprocess]+=$3}}END{for(i in a){print a[i]}}'`
     echo "$cpu_avg"
 }
 

@@ -13,7 +13,10 @@ echo '{'
 echo -e '\t"data":['
 while [ $i -le $n ]
 do
-   echo -e '\t\t{"{#MEM_PROCESS_NAME}":"'`ps -eo pid,%mem,comm | sort -nr -k 2 | awk -v m="$percent"  '{if($2 >m){print $0}}' | awk '{a[$NF]+=$2}END{for(k in a){print a[k],k}}'| awk -v n1="${i}" '{if(NR==n1){print $2}}' `'"}' 
+   echo -en '\t\t{"{#MEM_PROCESS_NAME}":"'`ps -eo pid,%mem,comm | sort -nr -k 2 | awk -v m="$percent"  '{if($2 >m){print $0}}' | awk '{a[$NF]+=$2}END{for(k in a){print a[k],k}}'| awk -v n1="${i}" '{if(NR==n1){print $2}}' `'"}' 
+    if [ $i -lt $n ];then
+        echo ','
+    fi
     let i++
 done
 echo -e '\n\t]'
